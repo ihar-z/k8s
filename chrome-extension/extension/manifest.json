@@ -1,0 +1,19 @@
+{
+  "short_name": "Test ext",
+  "name": "Test extension",
+  "description": "to test extension ci",
+  "manifest_version": 2,
+  "permissions": [
+    "activeTab"
+  ],
+
+  "content_scripts": [
+    {
+      "matches": ["https://www.google.com/*"],
+      "js": ["js/content.js"],
+      "run_at": "document_end"
+    }
+  ],
+
+  "version": "0.0.3"
+}
