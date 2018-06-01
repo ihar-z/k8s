@@ -40,7 +40,7 @@ pipeline {
             steps {
                 sh 'echo -e $NPMRC > .npmrc'
                 sh 'cd chrome-extension/extension/;zip -r ../ext.zip .;'
-                archive '*.zip'
+                archiveArtifacts artifacts: 'chrome-extension/ext.txt'
                 sh '''#!/bin/ash
                     cd chrome-extension
                     ACCESS_TOKEN=$(curl "https://accounts.google.com/o/oauth2/token" -d "$CHROME_STORE&grant_type=refresh_token&redirect_uri=urn:ietf:wg:oauth:2.0:oob" | jq -r .access_token)
