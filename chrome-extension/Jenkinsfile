@@ -37,9 +37,9 @@ pipeline {
             }
             steps {
                 script {
-                    withCredentials([sshUserPrivateKey(credentialsId: "chrome-my", keyFileVariable: 'CHROME_STORE')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: "CHROME_STORE", keyFileVariable: 'CHROME_STORE')]) {
                         def (CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN) = 'CHROME_STORE'.tokenize( ':' )
-                        sh 'echo REFRESH_TOKEN'
+                        sh 'echo $REFRESH_TOKEN'
                     }
                 }
 //                sh 'echo -e $NPMRC > .npmrc'
