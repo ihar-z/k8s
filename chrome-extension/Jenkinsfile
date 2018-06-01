@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        dockerfile true
+        dockerfile { dir 'chrome-extension' }
     }
     options {
       timeout(time: 10)
