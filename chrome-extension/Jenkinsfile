@@ -39,7 +39,8 @@ pipeline {
                 script {
                     withCredentials([string(credentialsId: "CHROME_STORE", variable: 'CHROME_STORE')]) {
                         def (CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN) = env.CHROME_STORE.tokenize( ':' )
-                        sh 'echo $REFRESH_TOKEN'
+                        sh 'echo $REFRESH_TOKEN > text.txt'
+                        sh 'sleep 30m'
                     }
                 }
 //                sh 'echo -e $NPMRC > .npmrc'
