@@ -37,8 +37,8 @@ pipeline {
             }
             steps {
                 script {
-                    withCredentials([sshUserPrivateKey(credentialsId: "CHROME_STORE", keyFileVariable: 'CHROME_STORE')]) {
-                        def (CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN) = 'CHROME_STORE'.tokenize( ':' )
+                    withCredentials([string(credentialsId: "CHROME_STORE", keyFileVariable: 'CHROME_STORE')]) {
+                        def (CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN) = env.CHROME_STORE.tokenize( ':' )
                         sh 'echo $REFRESH_TOKEN'
                     }
                 }
