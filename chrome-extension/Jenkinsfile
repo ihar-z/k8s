@@ -37,7 +37,7 @@ pipeline {
             }
             steps {
                 script {
-                    withCredentials([string(credentialsId: "CHROME_STORE", keyFileVariable: 'CHROME_STORE')]) {
+                    withCredentials([string(credentialsId: "CHROME_STORE", variable: 'CHROME_STORE')]) {
                         def (CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN) = env.CHROME_STORE.tokenize( ':' )
                         sh 'echo $REFRESH_TOKEN'
                     }
