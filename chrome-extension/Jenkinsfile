@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        docker 'appropriate/curl'
+        dockerfile: true
     }
     options {
       timeout(time: 10)
@@ -28,6 +28,8 @@ pipeline {
                 NPMRC = credentials('NPMRC')
 //                BITBUCKET = credentials('jenkins_bitbucket')
                 BITBUCKET = credentials('bitbucket-admin')
+                CHROME_STORE = credentials('CHROME_STORE_PARAMS')
+                APP_ID = 'hhenonbofkdabjeiofocpfapcadiknoe'
             }
             when {
                 allOf {
@@ -36,12 +38,13 @@ pipeline {
                 }
             }
             steps {
-                script {
-                    withCredentials([string(credentialsId: "CHROME_STORE_PARAMS", variable: 'CHROME_STORE')]) {
-                        sh 'echo $CHROME_STORE'
-                    }
-                }
 //                sh 'echo -e $NPMRC > .npmrc'
+                sh ' cd extension/;zip -r ../ext.zip .;cd ..;'
+                sh '''#!/bin/bash
+                    ACCESS_TOKEN=$(curl "https://accounts.google.com/o/oauth2/token" -d "$CHROME_STORE&grant_type=refresh_token&redirect_uri=urn:ietf:wg:oauth:2.0:oob" | jq -r .access_token)
+                    curl -H "Authorization: Bearer ${ACCESS_TOKEN}" -H "x-goog-api-version: 2" -X PUT -T ext.zip -v "https://www.googleapis.com/upload/chromewebstore/v1.1/items/${APP_ID}"
+                    curl -H "Authorization: Bearer ${ACCESS_TOKEN}" -H "x-goog-api-version: 2" -H "Content-Length: 0" -X POST -v "https://www.googleapis.com/chromewebstore/v1.1/items/${APP_ID}/publish"
+                '''
 //                sh 'npm --no-git-tag-version version prerelease'
 //                sh 'npm publish'
 //                sh 'git -c "user.name=Jenkins" -c "user.email=Jenkins" commit --no-verify -m "Jenkins version bump" package.json'
