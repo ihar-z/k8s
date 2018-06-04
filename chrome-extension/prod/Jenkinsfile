@@ -25,12 +25,12 @@ pipeline {
                     reader.close()
 
                     results.items.each { data -> choices.push(data.version) }
-                    choices.sort()
+                    def params = choices.sort().join("\n")
 
                     env.VERSION = input(
                         message: "Enter version",
                         ok: "Publish",
-                        parameters: [ [$class: 'ChoiceParameterDefinition', choices: choices.sort(), description: 'Properties', name: 'prop'] ]
+                        parameters: [ [$class: 'ChoiceParameterDefinition', choices: params, description: 'Properties', name: 'prop'] ]
                     )
                 }
                 sh 'echo $VERSION'
