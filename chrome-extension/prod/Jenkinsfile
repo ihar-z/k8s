@@ -47,9 +47,7 @@ pipeline {
 @NonCPS
 def getVersions(moduleName) {
     def choices = []
-    def response = httpRequest "http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=" + moduleName
-
-    println("Content: "+response.content)
+    def response = httpRequest "http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=vcd-amazon-alexa-skill"
 
     def results = new JsonSlurper().parseText(response.getContent());
 
