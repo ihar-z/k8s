@@ -49,7 +49,9 @@ def getVersions(moduleName) {
     def choices = []
     def response = httpRequest "http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=" + moduleName
 
-    def results = new JsonSlurper().parseText(response.content);
+    println("Content: "+response.content)
+
+    def results = new JsonSlurper().parseText(response.getContent());
 
     results.items.each { data -> choices.push(data.version) }
     return choices.sort().join("\n")
