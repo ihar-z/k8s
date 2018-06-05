@@ -13,20 +13,10 @@ pipeline {
     stages {
         stage('Install') {
             steps {
-                sh 'sleep 2m'
+//                sh 'sleep 2m'
                 script {
 
-                    def choices = []
-                    def url = new URL("http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=vcd-amazon-alexa-skill")
-                    def conn = url.openConnection()
-                    conn.setDoOutput(true)
-
-                    def reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))
-                    def results = new JsonSlurper().parseText(reader.getText());
-                    reader.close()
-
-                    results.items.each { data -> choices.push(data.version) }
-                    def params = choices.sort().join("\n")
+                    def params = getVersions("vcd-amazon-alexa-skill")
 
                     env.VERSION = input(
                         message: "Enter version",
@@ -38,4 +28,19 @@ pipeline {
             }
         }
     }
+}
+
+@NonCPS
+def getVersions(moduleName) {
+    def choices = []
+    def url = new URL("http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=" + moduleName)
+    def conn = url.openConnection()
+    conn.setDoOutput(true)
+
+    def reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))
+    def results = new JsonSlurper().parseText(reader.getText());
+    reader.close()
+
+    results.items.each { data -> choices.push(data.version) }
+    return choices.sort().join("\n")
 }
