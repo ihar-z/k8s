@@ -15,8 +15,17 @@ pipeline {
             steps {
 //                sh 'sleep 2m'
                 script {
+                    def choices = []
 
-                    def params = getVersions("vcd-amazon-alexa-skill")
+                    def response = httpRequest "http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=vcd-amazon-alexa-skill"
+                    echo 'response'
+                    echo response
+                    echo response.content
+                    def results = new JsonSlurper().parseText(response.content)
+
+                    results.items.each { data -> choices.push(data.version) }
+
+                    def params = choices.sort().join("\n")
 
                     env.VERSION = input(
                         message: "Enter version",
