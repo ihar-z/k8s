@@ -13,6 +13,7 @@ pipeline {
     stages {
         stage('Install') {
             steps {
+                sh 'sleep 2m'
                 script {
 
                     def choices = []
