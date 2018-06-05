@@ -11,7 +11,9 @@ pipeline {
                 script {
                     def response = httpRequest "http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=vcd-amazon-alexa-skill"
 
-                    def params = new JsonSlurper().parseText(response.getContent()).items.collect { it.version }.sort().join("\n")
+                    def json = readJSON text: response.getContent()
+
+                    def params = json.items.collect { it.version }.sort().join("\n")
 
                     env.VERSION = input(
                         message: "Enter version",
