@@ -15,22 +15,8 @@ pipeline {
             steps {
 //                sh 'sleep 2m'
                 script {
-                    def choices = []
 
-                    def response = httpRequest "http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=vcd-amazon-alexa-skill"
-                    echo 'response'
-                    echo response.getContent()
-//                    echo response.content.getContent()
-                    def results = new JsonSlurper().parseText(response.getContent())
-                    echo 'result'
-
-                    results.items.each {
-                        data ->
-                            choices.push(data.version)
-                            echo 'lamda'
-                    }
-
-                    def params = choices.sort().join("\n")
+                    def params = getVersions("vcd-amazon-alexa-skill")
 
                     env.VERSION = input(
                         message: "Enter version",
@@ -61,14 +47,18 @@ pipeline {
 @NonCPS
 def getVersions(moduleName) {
     def choices = []
-    echo 'test'
-    def response = httpRequest "http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=vcd-amazon-alexa-skill"
-    echo 'response'
-    echo response
-    def results = new JsonSlurper().parseText(response.getContent())
-    echo 'results'
-    echo results
 
-    results.items.each { data -> choices.push(data.version) }
+    def response = httpRequest "http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=vcd-amazon-alexa-skill"
+//    echo 'response'
+//    echo response.getContent()
+    def results = new JsonSlurper().parseText(response.getContent())
+//    echo 'result'
+
+    results.items.each {
+        data ->
+            choices.push(data.version)
+//            echo 'lamda'
+    }
+
     return choices.sort().join("\n")
 }
