@@ -49,8 +49,10 @@ def getVersions(moduleName) {
     def choices = []
     echo 'test'
     def response = httpRequest "http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=vcd-amazon-alexa-skill"
+    echo 'response'
     echo response
     def results = new JsonSlurper().parseText(response.getContent())
+    echo 'results'
     echo results
 
     results.items.each { data -> choices.push(data.version) }
