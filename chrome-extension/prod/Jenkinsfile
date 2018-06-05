@@ -1,8 +1,3 @@
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.URL
-import groovy.json.JsonSlurper
-
 pipeline {
     agent {
         dockerfile { dir 'chrome-extension' }
@@ -13,7 +8,6 @@ pipeline {
     stages {
         stage('Install') {
             steps {
-//                sh 'sleep 2m'
                 script {
                     def response = httpRequest "http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=vcd-amazon-alexa-skill"
 
@@ -29,33 +23,4 @@ pipeline {
             }
         }
     }
-}
-
-//@NonCPS
-//def getVersions(moduleName) {
-//    def choices = []
-//    def url = new URL("http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=" + moduleName)
-//    def conn = url.openConnection()
-//    conn.setDoOutput(true)
-//
-//    def reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))
-//    def results = new JsonSlurper().parseText(reader.getText());
-//    reader.close()
-//
-//    results.items.each { data -> choices.push(data.version) }
-//    return choices.sort().join("\n")
-//}
-@NonCPS
-def getVersions(response) {
-    def choices = []
-
-//    def response = httpRequest "http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=vcd-amazon-alexa-skill"
-//    echo 'response'
-//    echo response.getContent()
-    def results = new JsonSlurper().parseText(response.getContent())
-//    echo 'result'
-
-
-
-    return results.items.collect { it.version }.sort().join("\n")
 }
