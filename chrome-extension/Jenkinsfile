@@ -43,11 +43,13 @@ pipeline {
                 zip zipFile: 'chrome-extension/ext.zip', archive: false, dir: 'chrome-extension/extension'
 //                archiveArtifacts artifacts: 'chrome-extension/ext.zip'
                 script {
+                    echo 'script'
                     def body = '$CHROME_STORE&grant_type=refresh_token&redirect_uri=urn:ietf:wg:oauth:2.0:oob'
                     def response = httpRequest acceptType: 'APPLICATION_JSON', contentType: 'APPLICATION_FORM_URLENCODED', httpMode: 'POST', requestBody: body, url: "https://accounts.google.com/o/oauth2/token"
                     def json = readJSON text: response.getContent()
+                    echo 'json'
 
-                    echo json
+                    echo json['.access_token']
                 }
 //                sh '''#!/bin/ash
 //                    cd chrome-extension
