@@ -15,8 +15,9 @@ pipeline {
             steps {
 //                sh 'sleep 2m'
                 script {
+                    def response = httpRequest "http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=vcd-amazon-alexa-skill"
 
-                    def params = getVersions("vcd-amazon-alexa-skill")
+                    def params = getVersions(response)
 
                     env.VERSION = input(
                         message: "Enter version",
@@ -45,10 +46,10 @@ pipeline {
 //    return choices.sort().join("\n")
 //}
 @NonCPS
-def getVersions(moduleName) {
+def getVersions(response) {
     def choices = []
 
-    def response = httpRequest "http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=vcd-amazon-alexa-skill"
+//    def response = httpRequest "http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=vcd-amazon-alexa-skill"
 //    echo 'response'
 //    echo response.getContent()
     def results = new JsonSlurper().parseText(response.getContent())
