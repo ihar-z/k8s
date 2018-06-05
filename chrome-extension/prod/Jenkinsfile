@@ -22,8 +22,13 @@ pipeline {
                     echo response
                     echo response.content
                     def results = new JsonSlurper().parseText(response.content)
+                    echo 'result'
 
-                    results.items.each { data -> choices.push(data.version) }
+                    results.items.each {
+                        data ->
+                            choices.push(data.version)
+                            echo 'lamda'
+                    }
 
                     def params = choices.sort().join("\n")
 
