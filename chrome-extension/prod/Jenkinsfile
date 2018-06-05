@@ -30,16 +30,26 @@ pipeline {
     }
 }
 
+//@NonCPS
+//def getVersions(moduleName) {
+//    def choices = []
+//    def url = new URL("http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=" + moduleName)
+//    def conn = url.openConnection()
+//    conn.setDoOutput(true)
+//
+//    def reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))
+//    def results = new JsonSlurper().parseText(reader.getText());
+//    reader.close()
+//
+//    results.items.each { data -> choices.push(data.version) }
+//    return choices.sort().join("\n")
+//}
 @NonCPS
 def getVersions(moduleName) {
     def choices = []
-    def url = new URL("http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=" + moduleName)
-    def conn = url.openConnection()
-    conn.setDoOutput(true)
+    def response = httpRequest "http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=" + moduleName
 
-    def reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))
-    def results = new JsonSlurper().parseText(reader.getText());
-    reader.close()
+    def results = new JsonSlurper().parseText(response.content);
 
     results.items.each { data -> choices.push(data.version) }
     return choices.sort().join("\n")
