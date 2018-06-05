@@ -19,8 +19,8 @@ pipeline {
 
                     def response = httpRequest "http://nexus.crinfra.net:8081/nexus/service/rest/beta/search?name=vcd-amazon-alexa-skill"
                     echo 'response'
-                    echo response
-                    echo response.content
+                    echo response.getContent()
+                    echo response.content.getContent()
                     def results = new JsonSlurper().parseText(response.content)
                     echo 'result'
 
