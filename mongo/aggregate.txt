@@ -1,0 +1,107 @@
+mongo "mongodb://cluster0-shard-00-00-jxeqq.mongodb.net:27017,cluster0-shard-00-01-jxeqq.mongodb.net:27017,cluster0-shard-00-02-jxeqq.mongodb.net:27017/aggregations?replicaSet=Cluster0-shard-0" --authenticationDatabase admin --ssl -u m121 -p aggregations --norc
+// different matches
+var pipline = [{$match:{"imdb.rating":{$gte:7},genres:{$nin:["Crime","Horror"]},rated:{$in:["PG","G"]},languages:{$all:["English","Japanese"]}}},{$project:{title:1,rated:1,"_id":0}}]
+
+// match single word titles only
+var pipline = [{$project:{title:1,titleWords:{$split:["$title"," "]}}},{$match:{titleWords:{$size:1}}},{$project:{title:1,"_id":0}}]
+
+// transform writer from "Victorien Sardou (adapted from the play by)" to "Victorien Sardou"
+var pip = [{$match:{writers:{$exists:true}}},{$project:{writers:1,writers1:{$map:{input:"$writers",in:{$arrayElemAt:[{$split:["$$this", " ("]},0]}}}}}]
+
+//find movies where same person in writers, cast and directors
+var filterEmpty = {$match:{writers:{$elemMatch:{$exists:true}},cast:{$elemMatch:{$exists:true}},directors:{$elemMatch:{$exists:true}}}}
+var mapWriters = {$project:{"_id":0,cast:1, directors:1,writers:{$map:{input:"$writers",in:{$arrayElemAt:[{$split:["$$this", " ("]},0]}}}}}
+var findPersonsFromAllArrays1 = {$project:{writers:1,cast:1, directors:1,"labors of love":{
+  $gt:[
+      {
+        $size:{ $setIntersection:["$cast","$directors","$writers"] }
+      },
+      0
+    ]
+  }
+}}
+var filterPrevious1 = {$match:{"labors of love": true}}
+
+var filterNonEmptyArray = {$match:{"labors of love": "$anyElementTrue"}}
+var filterNonEmptyArray1 = {$match:{"labors of love.1": {$exists:true}}}
+var pip = [filterEmpty,mapWriters,findPersonsFromAllArrays1,filterPrevious1]
+db.movies.aggregate(pip)
+
+// $addFields - same as $project but we don't need to explicitly keep (set to 1) all other fields
+
+// $geoNear - allows for geo queries - MUST be first in pipeline - can be used on sharded collections
+// collections MUST have only one 2dsphere index
+
+db.nycFacilities.aggregate([{
+ $geoNear:{
+   near: {
+     type: "Point",
+     coordinates: [-73.98769766092299, 40.75734523366594]
+   },
+   distanceField: "distanceFromMongoDB",
+   spherical: true,
+   query: {type: "Hospital"},
+   limit: 5
+ }
+}]).pretty()
+
+// $limit $skip $count - aggregation stages
+
+// $sort:{magneticFiled:1, numberOfMoons: -1} ---if at the beginning of the pipeline can use indexes. limit to 100Mb memory
+// we can pass {allowDiskUse:true} option to aggregate() second arg to use disk for larger sorting
+
+//$sample - select random documents. should be first in pipeline(or memory restrictions apply like in sort)
+db.nycFacilities.aggregate([{$sample:{size:200}}])
+
+// find movies contained these
+var favorites = [
+      "Sandra Bullock",
+      "Tom Hanks",
+      "Julia Roberts",
+      "Kevin Spacey",
+      "George Clooney"];
+var match = {$match:{"tomatoes.viewer.rating":{$gte:3},cast:{$elemMatch:{$exists:true}}}}
+var sort = {$sort:{num_favs: -1, "tomatoes.viewer.rating": -1, title: -1}}
+var num_favs = {$addFields:{num_favs: {
+  $size:{
+    $setIntersection:[favorites, "$cast"]
+  }
+}}}
+var skip = {$skip:24}
+var limit = {$limit:40}
+var project = {$project:{title:1,_id:0, cast:1,num_favs:1,"tomatoes.viewer.rating":1}}
+
+var pip = [match,num_favs,sort,limit,project]
+db.movies.aggregate(pip,{allowDiskUse:true})
+
+//
+var pr = {$project:{released:{$year:"$released"},"imdb.rating":1,"imdb.votes":1,languages:1,title:1}}
+var match = {$match:{languages:"English", "imdb.rating":{$gte:1}, "imdb.votes":{$gte:1},released:{$gte:1990}}}
+var scale = {$addFields:{scaled_votes:
+  {
+    $add: [
+      1,
+      {
+        $multiply: [
+          9,
+          {
+            $divide: [
+              { $subtract: ["$imdb.votes", 5] },
+              { $subtract: [1521105, 5] }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}}
+var normalize = {$addFields:{normalized_rating: {$avg:["$scaled_votes", "$imdb.rating"]}}}
+var sort = {$sort:{normalized_rating:1}}
+
+var pip = [pr,match,scale,normalize,sort]
+db.movies.aggregate(pip,{allowDiskUse:true})
+
+//GROUP
+db.movies.aggregate([{$group:{_id:"$year",num:{$sum:1}}},{$sort:{num: -1}}])
+db.movies.aggregate([{$group:{_id:{numDirect:{$cond:[{$isArray:"$directors"},{$size:"$directors"},0]}},numDilms:{$sum:1},averageMeracritic:{$avg:"$metacritic"}}},{$sort:{"_id.numDirect": -1}}])
+db.movies.aggregate([{$match:{metacritic:{$gte:0}}},{$group:{_id:null,avgMeta:{$avg:"$metacritic"}}}])

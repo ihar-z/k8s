@@ -1,0 +1,120 @@
+db.movieDetails.drop();
+
+
+db.movieDetails.insertMany([{asd:"asd"}])
+db.movieDetails.insertOne({asd:"asd"})
+
+db.movieDetails.find({"first.nested":"asd"})
+db.movieDetails.find({"rated":"PG-13","awards.nominations":10}).count()
+
+//array matches
+//exact match(including order)
+db.movieDetails.find({"actors": ["fist","last"]})
+//match any item in array
+db.movieDetails.find({"actors": "any"})
+//match element in given index - (first el in example)
+db.movieDetails.find({"actors.0": "first"})
+
+mongoimport --db learning_mongo --collection tours --jsonArray --file tours.json   ---import file
+
+mongo "mongodb://testcluster0-shard-00-00-8t96w.mongodb.net:27017,testcluster0-shard-00-01-8t96w.mongodb.net:27017,testcluster0-shard-00-02-8t96w.mongodb.net:27017/video?replicaSet=TestCluster0-shard-0" --ssl --authenticationDatabase admin --username phoenix2x --- connect
+
+mongo "mongodb://testcluster0-shard-00-00-8t96w.mongodb.net:27017,testcluster0-shard-00-01-8t96w.mongodb.net:27017,testcluster0-shard-00-02-8t96w.mongodb.net:27017/video?replicaSet=TestCluster0-shard-0" --ssl --authenticationDatabase admin --username phoenix2x --password <PASS> insertMany-ordered.js  ---- execute file
+___
+SHEll
+
+use learning_mongo
+
+show collections
+
+
+db.tours.drop()  ----remove collection
+db.tours.count()
+db.tours.insert({ "tourName":"The wine test", "tourLength":3, "tourDescription":"Santa", "tourPrice":500, "tourTags":["wine","some"] } )
+
+db.movieDetails.insertMany([{asd:"asd"}])
+db.movieDetails.insertOne({asd:"asd"})
+
+//explain
+db.tours.find({ "tourPrice":{$lte:500}, "tourLength":{$lte:3}}).explain("executionStats") ---.explain - allows to see actual execution stats(indexes usage ect)
+db.tours.find({"tourTags":"wine"})
+db.tours.find({ "tourPrice":{$lte:500}, "tourLength":{$lte:3}})
+
+//array matches
+//exact match(including order)
+db.movieDetails.find({"actors": ["fist","last"]})
+//match any item in array
+db.movieDetails.find({"actors": "any"})
+//match element in given index - (first el in example)
+db.movieDetails.find({"actors.0": "first"})
+
+//second argument is a show param(projection), chained function sort
+db.tours.find({}, {tourName:1,tourPrice:1, _id:0}).sort({tourPrice:-1}).limit(1).skip(20)
+//text search
+db.tours.find({$text:{$search:"wine"}})
+//sort by text search relevance(score)
+db.tours.find({$text:{$search:"wine"}}, {score:{$meta:"textScore"}}).sort({score:{$meta:"textScore"}})
+//regexp
+db.tours.find({tourDescription:{$regex:/backpack/i}})
+//shortcut  - same as above
+db.tours.find({tourDescription:/backpack/i})
+
+//AGGREGATE
+db.tours.aggregate([{$group:{_id:'$tourPackage',count:{$sum:1}}}])
+db.tours.aggregate([{$group:{_id:'$tourPackage',average:{$avg:'$tourPrice'},count:{$sum:1}}}])
+//out results in 'prices' collection
+db.tours.aggregate([{$group:{_id:'$tourPackage',average:{$avg:'$tourPrice'},count:{$sum:1}}},{$out:'prices'}])
+
+db.tours.remove({"tourName":"The wine test"})
+
+db.tours.updateOne -- update first
+db.tours.update({"tourName":"The wine test"}, {$addToSet:{"tourTags":"New Tag"}})  -- $addToSet - add item to array
+db.tours.update({"tourName":"The wine test"}, {$push:{"tourTags":{$each:["tag1", "Tag2"]}}})     ---$each modifier add all items as individual items in array
+db.tours.update({"tourName":"The wine test"}, {$set:{"tourRegion":"Central Cost"}})     ---$set - to just set one field instead of rewrite
+db.tours.update({"tourName":"The wine test"}, {"tourRegion":"Central Cost"})    --- complete ovewrite, object will just waht we passed
+db.tours.updateMany({"tourName":null}, {$unset:{"tourName":""})    --- remove null props
+
+//UPSERTS
+let detail = {"props":"val", "imdb":{id:12}}
+db.tours.updateOne({"imdb.id":detail.imdb.id}, {$set:detail}, {upsert: true})    --- updates or inserts new document if "id" is not found
+
+//REPLACE
+db.tours.replaceOne({"imdb.id":detail.imdb.id}, detail)    --- complete ovewrite dcument
+
+//DELETE
+db.tours.deleteOne({_id: ObjectId("123123asdd2143")})
+db.tours.deleteMany({"imdb.id":detail.imdb.id})
+
+//INDEXES
+//uniq sigle field
+db.tours1.createIndex({tour:1},{unique:true})
+//compound index
+db.tours1.createIndex({tour:1,tourName:1})
+//text index- can be only one in collection
+db.tours.createIndex({tourDesciption:"text",tourBlurb:"text"})
+
+//QUERY OPERATORS
+//COMPARSION
+db.movieDetails.find({runtime:{$gt:120, $lt: 200}}).count() --- all movies 120 < runtime < 200
+$ne --- not equal
+$in:["val1", "val2"] --- mathes any of
+$nin: ["val1", "val2"] --- non of
+
+//ELEMENT Operators
+{mpaa:{$exists:true}) --- "mpaa" filed exists
+{mpaa: null} --- mapthes BOTH keys with 'null' and non existent keys
+{viewerRating: {$type: "int"}} --- int type
+//LOGICAL
+{$or: [{
+	"tomato.meter": {$gt:95}},
+	{"metacritics": {$gt: 88}}
+]}
+{$and: [
+	{"methacritics": {$ne: null}},
+	{"methacritics": {$exists: true}},
+]}
+
+//ARRAY operators
+{genres:{$all:["Comedy", "crime"]}} -- match array that contains all of
+{genres: {$size: 2}} -- size
+$elemMatch:{"prop1":"val1","prop2":"val2"} --- mathces elements that match both conditions

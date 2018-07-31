@@ -1,0 +1,63 @@
+chrome store auth:
+clientId: 299930123479-48ht9ekm9bg75qskndk6elkmm3bfllkm.apps.googleusercontent.com
+secret: hF7U1K_OW7ONYyPBis2AZZZa
+
+https://accounts.google.com/o/oauth2/auth?response_type=code&scope=https://www.googleapis.com/auth/chromewebstore&client_id=$CLIENT_ID&redirect_uri=urn:ietf:wg:oauth:2.0:oob
+
+code: 4/AACDChmDmVW7qpG8Vo4yZTfT_ras9VKE1lGGJoh_Tke1zgig5zJkrQQ
+
+
+
+curl "https://accounts.google.com/o/oauth2/token" -d "client_id=299930123479-48ht9ekm9bg75qskndk6elkmm3bfllkm.apps.googleusercontent.com&client_secret=hF7U1K_OW7ONYyPBis2AZZZa&code=4/AACDChmDmVW7qpG8Vo4yZTfT_ras9VKE1lGGJoh_Tke1zgig5zJkrQQ&grant_type=authorization_code&redirect_uri=urn:ietf:wg:oauth:2.0:oob" | jq '.refresh_token'
+
+refreshTocken: 1/i8-m-WSVP7LHiuX5Zp8Rhqv2DfbuteFE_g6x6nKE5sM
+
+
+applicationId(extensionId): hhenonbofkdabjeiofocpfapcadiknoe
+
+
+299930123479-48ht9ekm9bg75qskndk6elkmm3bfllkm.apps.googleusercontent.com:hF7U1K_OW7ONYyPBis2AZZZa:1/i8-m-WSVP7LHiuX5Zp8Rhqv2DfbuteFE_g6x6nKE5sM
+
+client_id=299930123479-48ht9ekm9bg75qskndk6elkmm3bfllkm.apps.googleusercontent.com&client_secret=hF7U1K_OW7ONYyPBis2AZZZa&refresh_token=1/i8-m-WSVP7LHiuX5Zp8Rhqv2DfbuteFE_g6x6nKE5sM
+
+
+curl \
+-H "Authorization: Bearer ya29.GlzNBdZzPlot2ioNMnZihAccJBUXzYdpQX_WC-qEAy5WnopfytBZvuM5LZkCv9qQerL3yNq-exwZbvTgOxzyHLC1_y-Xv2AaYrbYYSAkutmzf5O_p7ITSgBD48nKdw"  \
+-H "x-goog-api-version: 2" \
+-H "Content-Length: 0" \
+-H "publishTarget: trustedTesters" \
+-X POST \
+-v \
+https://www.googleapis.com/chromewebstore/v1.1/items/hhenonbofkdabjeiofocpfapcadiknoe/publish
+
+#MY
+https://accounts.google.com/o/oauth2/token?client_id=299930123479-48ht9ekm9bg75qskndk6elkmm3bfllkm.apps.googleusercontent.com&client_secret=hF7U1K_OW7ONYyPBis2AZZZa&code=4/AACDChmDmVW7qpG8Vo4yZTfT_ras9VKE1lGGJoh_Tke1zgig5zJkrQQ&grant_type=authorization_code&redirect_uri=urn:ietf:wg:oauth:2.0:oob
+
+cr ext
+https://chrome.google.com/webstore/developer/edit/kandmocnmanoaloekgknhoglifmehiij?authuser=0
+https://chrome.google.com/webstore/devconsole/u329e15f86b321379e9881bb1ba9f33c2/kandmocnmanoaloekgknhoglifmehiij/edit/distribution
+
+https://chrome.google.com/webstore/developer/edit/biiadeihgbbgockdnholjobffblpadnp?authuser=0
+
+client_id=421864976796-21lvhs68too8khce65ku7u4l0aj5jsle.apps.googleusercontent.com
+client_secret=svjc3qxRXFPKkZ9mZQVDGDu6
+CODE=4/AAAFW3zOFZkYStiaUDQMSsI-qcLUqUYZXkKrRL2vHT5ILxYpXzOrK8E
+#CR
+https://accounts.google.com/o/oauth2/token?client_id=421864976796-21lvhs68too8khce65ku7u4l0aj5jsle.apps.googleusercontent.com&client_secret=svjc3qxRXFPKkZ9mZQVDGDu6&code=4/AAAFW3zOFZkYStiaUDQMSsI-qcLUqUYZXkKrRL2vHT5ILxYpXzOrK8E&grant_type=authorization_code&redirect_uri=urn:ietf:wg:oauth:2.0:oob
+
+CLIENT_ID=421864976796-21lvhs68too8khce65ku7u4l0aj5jsle.apps.googleusercontent.com
+CLIENT_SECRET=svjc3qxRXFPKkZ9mZQVDGDu6
+CODE=4/AACG1r_t2mP7Db9WvIs_qnvdtdl3265cXQT_wEEZzHhQmNCqloan-98
+refresh_tocken=1/8Pd2OVY5EvQIf2G6DZ7g114Pl-q3JrMAy1XsKX4XQOSk6XdkmIOWeF7wb4QYo6HM
+https://accounts.google.com/o/oauth2/token?client_id=421864976796-21lvhs68too8khce65ku7u4l0aj5jsle.apps.googleusercontent.com&client_secret=svjc3qxRXFPKkZ9mZQVDGDu6&refresh_tocken=1/8Pd2OVY5EvQIf2G6DZ7g114Pl-q3JrMAy1XsKX4XQOSk6XdkmIOWeF7wb4QYo6HM&grant_type=refresh_token&redirect_uri=urn:ietf:wg:oauth:2.0:oob
+
+#CR - jenkins
+client_id=421864976796-21lvhs68too8khce65ku7u4l0aj5jsle.apps.googleusercontent.com&client_secret=svjc3qxRXFPKkZ9mZQVDGDu6&refresh_token=1/8Pd2OVY5EvQIf2G6DZ7g114Pl-q3JrMAy1XsKX4XQOSk6XdkmIOWeF7wb4QYo6HM
+
+#URL to get code
+https://accounts.google.com/o/oauth2/auth?response_type=code&scope=https://www.googleapis.com/auth/chromewebstore&client_id=421864976796-21lvhs68too8khce65ku7u4l0aj5jsle.apps.googleusercontent.com&redirect_uri=urn:ietf:wg:oauth:2.0:oob
+#commands:
+CHROME_STORE="client_id=421864976796-21lvhs68too8khce65ku7u4l0aj5jsle.apps.googleusercontent.com&client_secret=svjc3qxRXFPKkZ9mZQVDGDu6&refresh_token=1/8Pd2OVY5EvQIf2G6DZ7g114Pl-q3JrMAy1XsKX4XQOSk6XdkmIOWeF7wb4QYo6HM"
+APP_ID="kandmocnmanoaloekgknhoglifmehiij"
+ACCESS_TOKEN=$(curl "https://www.googleapis.com/oauth2/v4/token" -d "$CHROME_STORE&grant_type=refresh_token&redirect_uri=urn:ietf:wg:oauth:2.0:oob" | jq -r .access_token)
+curl -f -H "Authorization: Bearer ${ACCESS_TOKEN}" -H "x-goog-api-version: 2" -H "Content-Length: 0" -X POST -v "https://www.googleapis.com/chromewebstore/v1.1/items/${APP_ID}/publish?publishTarget=trustedTesters"

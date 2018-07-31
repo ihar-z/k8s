@@ -1,0 +1,3 @@
+mongoimport --uri mongodb://localhost:27017/products --collection model --file test.json
+
+mongoexport --uri mongodb://<user>:<pass>@avamongo1dev1.crinfra.net:27017/products --collection model --limit 1000 --out test.json
