@@ -1,0 +1,18 @@
+version: 0.0
+os: linux
+files:
+  - source: /aws-demo-app/index.html
+    destination: /var/www/html/
+hooks:
+  BeforeInstall:
+    - location: aws-demo-app/install_dependencies
+      timeout: 300
+      runas: root
+    - location: aws-demo-app/start_server
+      timeout: 300
+      runas: root
+  ApplicationStop:
+    - location: aws-demo-app/stop_server
+      timeout: 300
+      runas: root
+

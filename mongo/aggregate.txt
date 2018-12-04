@@ -105,3 +105,55 @@ db.movies.aggregate(pip,{allowDiskUse:true})
 db.movies.aggregate([{$group:{_id:"$year",num:{$sum:1}}},{$sort:{num: -1}}])
 db.movies.aggregate([{$group:{_id:{numDirect:{$cond:[{$isArray:"$directors"},{$size:"$directors"},0]}},numDilms:{$sum:1},averageMeracritic:{$avg:"$metacritic"}}},{$sort:{"_id.numDirect": -1}}])
 db.movies.aggregate([{$match:{metacritic:{$gte:0}}},{$group:{_id:null,avgMeta:{$avg:"$metacritic"}}}])
+
+//FACETS
+//$sortByCount - same as group followed by desc sort
+//returns number of documents grouped by field
+db.companies.aggregate([{$match:{$text:{$search:'network'}}},{$sortByCount:'$category_code'}])
+
+//$buckets
+//manual
+//returns number of documents grouped by ranges withing provided boundaries
+db.companies.aggregate([{$match:{'founded_year':{$gt:1980},'number_of_employees':{$ne:null}}},{$bucket:{groupBy:'$number_of_employees',boundaries:[0,20,50,1000,Infinity]}}])
+
+//$bucketAuto
+//specify number of buckets, mongo will try to distribute documents
+db.companies.aggregate([{$match:{'founded_year':{$gt:1980},'number_of_employees':{$ne:null}}},{$bucketAuto:{groupBy:'$number_of_employees',buckets:10}}])
+
+//$facet
+db.companies.aggregate([
+  {$match:{'founded_year':{$gt:1980},'number_of_employees':{$ne:null}}},
+  {$facet:{
+    employee:[
+      {$bucket:{groupBy:'$number_of_employees',boundaries:[0,20,50,1000,Infinity]}}
+      ],
+    emp2:[
+    {$bucketAuto:{groupBy:'$number_of_employees',buckets:10}}
+    ]
+  }}
+  ])
+
+
+//cr cj shopping counts
+//$facet
+{
+  offersCount: [ {$count:'count'} ],
+  totalCrModels:[{$group:{_id: '$modelId',count:{$sum: 1}}}],
+  offersPerMerchant:[{$group:{_id:'$programName',offers:{$sum:1}}}],
+  byUpc:[{$match:{$expr:{$eq:['$upc', '$crUpc']}}},{$count:'count'}],
+  byMpn:[{$match:{$expr:{$and:[{$eq:['$crBrand', '$manufacturer']},{$eq:['$crMpn','$manufacturerId']}]}}},{$count:'count'}]
+}
+//$project
+{
+  totalCrModels:{$size:'$totalCrModels'},
+  offersCount: {$arrayElemAt:['$offersCount.count', 0]},
+  merchantCount: {$size:'$offersPerMerchant'},
+  offersPerMerchant:1,
+  byUpc: {$arrayElemAt:['$byUpc.count', 0]},
+  byMpn: {$arrayElemAt:['$byMpn.count', 0]}
+}
+
+//amazon
+
+
+

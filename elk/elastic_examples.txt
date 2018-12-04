@@ -1,0 +1,15 @@
+#Put doc
+curl -XPUT 'http://localhost:9200/twitter/_doc/1' -H 'Content-Type: application/json' -d '
+{
+    "user" : "kimchy",
+    "post_date" : "2009-11-15T14:12:12",
+    "message" : "trying out Elasticsearch"
+}
+'
+
+#see cluster settings
+http://localhost:9200/_cluster/settings?pretty&include_defaults=true
+
+
+#run beats
+./metricbeat -e -c metricbeat.yml -d 'publish'
